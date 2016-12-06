@@ -1,2 +1,5 @@
 # zabbix-owrt
-Zabbix OpenWrt packages
+Zabbix OpenWrt packages feed
+
+# Installing
+

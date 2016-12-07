@@ -1,0 +1,19 @@
+menu "Zabbix framework configuration"
+	depends on PACKAGE_zaf
+
+	config ZAF_CURL_INSECURE
+		bool "Force insecure curl for https"
+		default n
+
+	config ZAF_PLUGINS
+		string "Zabbix agent framework plugins to install"
+		default "zaf"
+
+	config ZAF_REPO_URL
+		string "Url of zabbix repo to download plugins from"
+		default "https://raw.githubusercontent.com/limosek/zaf-plugins/master/"
+
+	config ZAF_OPTIONS
+		string "Options passed to install script"
+		default ""
+endmenu

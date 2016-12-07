@@ -4,16 +4,17 @@ menu "Core Zabbix configuration"
 	choice 
 
 		prompt "SSL library to use"
-		default ZABBIX3_OPENSSL if PACKAGE_libopenssl
-		default ZABBIX3_GNUTLS if PACKAGE_libgnutls
+		default ZABBIX3_OPENSSL
 		help
 		   Select SSL library to use for Zabbix
 
 		config ZABBIX3_OPENSSL
 		bool "OpenSSL"
+		select PACKAGE_libopenssl
 	
 		config ZABBIX3_GNUTLS
 		bool "GnuTLS"
+		select PACKAGE_libgnutls
 
 	endchoice
 

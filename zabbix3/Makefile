@@ -101,14 +101,14 @@ endef
 define Package/zabbix3-server
   $(call Package/zabbix3/Default)
   TITLE+= server
-  DEPENDS += +zabbix3-core +ZABBIX3_SNMP:libnetsnmp +ZABBIX3_XML2:libxml2 +ZABBIX3_CURL:libcurl  
+  DEPENDS += +zabbix3-core +ZABBIX3_SNMP:libnetsnmp +ZABBIX3_XML2:libxml2 +ZABBIX3_CURL:libcurl +libsqlite3
   PKG_BUILD_DEPENDS += libsqlite3
 endef
 
 define Package/zabbix3-proxy
   $(call Package/zabbix3/Default)
   TITLE+= proxy
-  DEPENDS += +zabbix3-core +ZABBIX3_SNMP:libnetsnmp +ZABBIX3_XML2:libxml2 +ZABBIX3_CURL:libcurl 
+  DEPENDS += +zabbix3-core +ZABBIX3_SNMP:libnetsnmp +ZABBIX3_XML2:libxml2 +ZABBIX3_CURL:libcurl +libsqlite3
   PKG_BUILD_DEPENDS += libsqlite3
 endef
 

@@ -15,6 +15,7 @@ PKG_SOURCE:=zabbix-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=@SF/zabbix
 PKG_MD5SUM:=4f363b923ef2b5eefddee8dfc5f51e2b
 PKG_BUILD_DIR:=$(BUILD_DIR)/zabbix3-$(PKG_VERSION)
+PKG_BUILD_DEPENDS+=sqlite3 libcurl libxml2 net-snmp
 
 PKG_LICENSE:=GPL-2.0
 PKG_LICENSE_FILES:=COPYING
@@ -27,14 +28,17 @@ include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
 
 CONFIGURE_ARGS+= \
-	--disable-java
+	--disable-java \
+	$(call autoconf_bool,CONFIG_IPV6,ipv6) 
 
 ifdef ZABBIX3_OPENSSL
  CONFIGURE_ARGS += --with-openssl="$(STAGING_DIR)/usr" 
+ ZDEPENDS += +libopenssl
 endif
 
 ifdef ZABBIX3_GNUTLS
   CONFIGURE_ARGS += --with-gnutls="$(STAGING_DIR)/usr"
+  ZDEPENDS += +libgnutls
 endif
 
 ifdef CONFIG_PACKAGE_zabbix3-server
@@ -49,20 +53,19 @@ ifdef CONFIG_PACKAGE_zabbix3-agentd
  CONFIGURE_ARGS += --enable-agent
 endif
 
-ifdef CONFIG_IPV6
- CONFIGURE_ARGS += --enable-ipv6
-endif
-
 ifdef CONFIG_ZABBIX3_CURL
  CONFIGURE_ARGS += --with-libcurl="$(STAGING_DIR)/usr/bin/curl-config"
+ SDEPENDS += +libcurl
 endif
 
 ifdef CONFIG_ZABBIX3_XML2
  CONFIGURE_ARGS += --with-libxml2="$(STAGING_DIR)/usr/" 
+ ZDEPENDS += +libxml2
 endif
 
 ifdef CONFIG_ZABBIX3_SNMP
  CONFIGURE_ARGS += --with-net-snmp="$(STAGING_DIR)/usr" LDFLAGS="-lnetsnmp"
+ ZDEPENDS += +libnetsnmp
 endif
 
 define Package/zabbix3/Default
@@ -71,8 +74,9 @@ define Package/zabbix3/Default
   TITLE:=Zabbix
   URL:=http://www.zabbix.com/
   SUBMENU:=zabbix3
-  MAINTAINER:=Lukas Macura <lukas.macura@cesnet.cz>
-  DEPENDS:=+ZABBIX3_OPENSSL:libopenssl +ZABBIX3_GNUTLS:libgnutls 
+  MAINTAINER:= Lukas Macura <lukas.macura@cesnet.cz>
+  DEPENDS:=$(ICONV_DEPENDS) $(ZDEPENDS)
+  USERID:=zabbix=53:zabbix=53
 endef
 
 define Package/zabbix3-core
@@ -101,15 +105,13 @@ endef
 define Package/zabbix3-server
   $(call Package/zabbix3/Default)
   TITLE+= server
-  DEPENDS += +zabbix3-core +ZABBIX3_SNMP:libnetsnmp +ZABBIX3_XML2:libxml2 +ZABBIX3_CURL:libcurl +libsqlite3
-  PKG_BUILD_DEPENDS += libsqlite3
+  DEPENDS += +zabbix3-core $(SDEPENDS) +libsqlite3
 endef
 
 define Package/zabbix3-proxy
   $(call Package/zabbix3/Default)
   TITLE+= proxy
-  DEPENDS += +zabbix3-core +ZABBIX3_SNMP:libnetsnmp +ZABBIX3_XML2:libxml2 +ZABBIX3_CURL:libcurl +libsqlite3
-  PKG_BUILD_DEPENDS += libsqlite3
+  DEPENDS += +zabbix3-core $(SDEPENDS) +libsqlite3
 endef
 
 MAKE_FLAGS += ARCH="linux"

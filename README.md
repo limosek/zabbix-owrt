@@ -10,16 +10,24 @@ This repo integrates zaf into zabbix agent init scripts so zabbix is ucified and
 ## How to use
 
 First, you have to setup and configure your OpenWrt build dir. More info here: https://wiki.openwrt.org/doc/howto/build
-Next, add this repo into feeds:
+Next, add this repo into feeds. *Note, this will overwrite your feeds.conf!*
 ```
-touch feeds.conf
+cat feeds.conf.default >feeds.conf
 echo src-git zabbix https://github.com/limosek/zabbix-owrt.git >>feeds.conf
 ./scripts/feeds update -a
 ./scripts/feeds install zabbix3 zaf
 make menuconfig
 ```
 
-Do not forget to disable zabbix packages and enable zabbix3 packages!
+Do not forget to disable zabbix packages and enable zabbix3 packages! To compile packages, use standard openwrt build to build all packages.
+```
+make package/compile
+```
+
+If you want to compile only zabbix packages and you know what you are doing:
+```
+make package/{openssl,gmp,nettle,gnutls,sqlite3,net-snmp,curl,libxml2,zabbix3}/install 
+```
 
 ## Fine tuning ##
 
@@ -30,5 +38,6 @@ You can use all of configuration options from Zaf for your packages. For example
 ZAF_PLUGINS=zaf,iwx
 ZAF_OPTIONS="Z_Server=zabbix.server.local Z_ServerActive=zabbix.server.local Z_HostnameItem=system.hostname Z_RefreshActiveChecks=60"
 ```
+
 
 

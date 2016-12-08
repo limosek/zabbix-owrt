@@ -2,7 +2,6 @@ menu "Core Zabbix configuration"
 	depends on PACKAGE_zabbix3-core
 
 	choice 
-
 		prompt "SSL library to use"
 		default ZABBIX3_OPENSSL
 		help
@@ -16,6 +15,8 @@ menu "Core Zabbix configuration"
 		bool "GnuTLS"
 		select PACKAGE_libgnutls
 
+		config ZABBIX3_NOTLS
+		bool "No TLS support"
 	endchoice
 
 	config ZABBIX3_CURL
